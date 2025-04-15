@@ -44,9 +44,11 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Product card styles */
 .card {
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 100%;
 }
 
 .card:hover {
@@ -55,12 +57,27 @@
 }
 
 .card-img-top {
+  height: 200px;
+  object-fit: cover;
   background-color: #f8f9fa;
 }
 
-.badge {
+.card-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.card-text {
+  color: #6c757d;
   font-size: 0.9rem;
-  padding: 0.5em 1em;
+  line-height: 1.4;
+}
+
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 500;
+  font-size: 0.85rem;
 }
 
 .btn-primary {
@@ -75,4 +92,104 @@
 
 .text-success {
   color: #28a745 !important;
+  font-size: 1.1rem;
+}
+
+/* Product card specific styles */
+.product-title-container {
+  height: 48px;
+  overflow: hidden;
+}
+
+.product-description-container {
+  height: 24px;
+  overflow: hidden;
+}
+
+.product-rating-container {
+  height: 24px;
+  margin-bottom: 1rem;
+}
+
+.product-meta-container {
+  height: 28px;
+  margin-bottom: 1rem;
+}
+
+.product-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-button-container {
+  margin-top: auto;
+}
+
+/* Container padding for product list */
+.products-container {
+  padding-bottom: 2rem;
+}
+
+/* Search filter styles */
+.search-filters-card {
+  position: sticky;
+  top: 1rem;
+  height: 380px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.search-filters-card .card-body {
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.search-filters-card form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.search-filters-card .mb-3 {
+  margin-bottom: 0.75rem !important;
+}
+
+.search-filters-card .card-title {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 0.5rem 0;
+  margin-top: -0.5rem;
+  z-index: 1;
+}
+
+.search-filters-card .form-control,
+.search-filters-card .form-select {
+  height: 38px;
+  font-size: 0.9rem;
+}
+
+.search-filters-card .row {
+  margin: 0;
+}
+
+.search-filters-card .btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Add a sticky footer for the buttons */
+.search-filters-card .filter-buttons {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding-top: 0.5rem;
+  margin-top: auto;
+  border-top: 1px solid rgba(0,0,0,0.1);
 }
