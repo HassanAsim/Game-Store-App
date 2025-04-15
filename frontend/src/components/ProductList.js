@@ -39,6 +39,9 @@ const ProductList = () => {
 
   const handleFilterChange = () => {
     setLoading(true);
+    fetchProducts().then(() => {
+      setLoading(false);
+    });
   };
 
   const renderStars = (rating) => {
@@ -54,7 +57,7 @@ const ProductList = () => {
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container">
+    <div className="container products-container">
       <div className="row">
         <div className="col-md-3">
           <SearchFilters onFilterChange={handleFilterChange} />
@@ -93,32 +96,37 @@ const ProductList = () => {
           <div className="row">
             {products.map((product) => (
               <div key={product._id} className="col-md-4 mb-4">
-                <div className="card h-100">
+                <div className="card h-100 d-flex flex-column">
                   <img 
                     src={product.imageUrl} 
                     className="card-img-top" 
                     alt={product.title} 
-                    style={{height: '200px', objectFit: 'cover'}} 
                   />
-                  <div className="card-body">
-                    <h5 className="card-title">{product.title}</h5>
-                    <p className="card-text text-truncate">{product.description}</p>
-                    <div className="mb-2">
+                  <div className="card-body product-card-body">
+                    <div className="product-title-container">
+                      <h5 className="card-title text-truncate">{product.title}</h5>
+                    </div>
+                    <div className="product-description-container">
+                      <p className="card-text text-truncate mb-2">{product.description}</p>
+                    </div>
+                    <div className="product-rating-container">
                       {renderStars(product.rating)}
                       <small className="text-muted ms-2">
                         ({product.numReviews} reviews)
                       </small>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="product-meta-container d-flex justify-content-between align-items-center">
                       <span className="badge bg-primary">{product.category}</span>
                       <span className="text-success fw-bold">${product.price}</span>
                     </div>
-                    <Link 
-                      to={`/product/${product._id}`} 
-                      className="btn btn-primary mt-2 w-100"
-                    >
-                      View Details
-                    </Link>
+                    <div className="product-button-container">
+                      <Link 
+                        to={`/product/${product._id}`} 
+                        className="btn btn-primary w-100"
+                      >
+                        View Details
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
