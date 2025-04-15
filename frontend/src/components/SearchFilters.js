@@ -77,12 +77,13 @@ const SearchFilters = ({ onFilterChange }) => {
             minPrice: '',
             maxPrice: ''
         });
-        navigate(location.pathname);
         onFilterChange({});
+        const queryParams = new URLSearchParams();
+        navigate(`${location.pathname}?${queryParams.toString()}`);
     };
 
     return (
-        <div className="card mb-4">
+        <div className="card mb-4 search-filters-card">
             <div className="card-body">
                 <h5 className="card-title">Search & Filters</h5>
                 <form onSubmit={handleSubmit}>
@@ -148,7 +149,7 @@ const SearchFilters = ({ onFilterChange }) => {
                             />
                         </div>
                     </div>
-                    <div className="d-flex gap-2">
+                    <div className="d-flex gap-2 filter-buttons">
                         <button type="submit" className="btn btn-primary flex-grow-1">
                             Apply Filters
                         </button>
