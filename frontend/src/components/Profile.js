@@ -11,16 +11,14 @@ const Profile = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Wait for auth to be initialized
-        if (loading) return;
-
-        // Redirect if not logged in
-        if (!user) {
+        if (!loading && !user) {
             navigate('/login');
             return;
         }
 
         const fetchOrders = async () => {
+            if (!user) return; // Don't fetch if no user
+
             try {
                 const config = {
                     headers: {
@@ -45,6 +43,11 @@ const Profile = () => {
     // Show loading while checking auth state
     if (loading || loadingOrders) {
         return <div className="text-center">Loading...</div>;
+    }
+
+    // Don't render anything if user is null - let useEffect handle redirect
+    if (!user) {
+        return null;
     }
 
     return (

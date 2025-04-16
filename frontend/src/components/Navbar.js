@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -8,10 +8,12 @@ const Navbar = () => {
   const { cartItems } = useCart();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
-    navigate('/login');
-  };
+    setTimeout(() => {
+      navigate('/login');
+    }, 0);
+  }, [logout, navigate]);
 
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
