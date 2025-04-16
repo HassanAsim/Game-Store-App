@@ -8,6 +8,7 @@ const OrderDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [paymentLoading, setPaymentLoading] = useState(false);
+    const [hasScrolled, setHasScrolled] = useState(false);
     const { id } = useParams();
     const { user } = useAuth();
     const { clearCart } = useCart();
@@ -36,11 +37,12 @@ const OrderDetails = () => {
                     clearCart();
                 }
 
-                // If showPayment is true and order is not paid, scroll to payment section
-                if (showPaymentScreen && !data.isPaid) {
+                // Only scroll once when component mounts and if conditions are met
+                if (showPaymentScreen && !data.isPaid && !hasScrolled) {
                     const paymentSection = document.getElementById('payment-section');
                     if (paymentSection) {
-                        paymentSection.scrollIntoView({ behavior: 'smooth' });
+                        paymentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        setHasScrolled(true);
                     }
                 }
             } catch (err) {
@@ -50,7 +52,7 @@ const OrderDetails = () => {
         };
 
         fetchOrder();
-    }, [id, user.token, showPaymentScreen, clearCart]);
+    }, [id, user.token, showPaymentScreen, clearCart, hasScrolled]);
 
     const handlePayment = async () => {
         setPaymentLoading(true);
@@ -95,56 +97,58 @@ const OrderDetails = () => {
             <h2 className="mb-4">Order Details</h2>
             <div className="row">
                 <div className="col-md-8">
-                    <div className="card mb-4">
-                        <div className="card-body">
-                            <h5 className="card-title">Shipping Information</h5>
-                            <p className="mb-1">Address: {order.shippingAddress.address}</p>
-                            <p className="mb-1">City: {order.shippingAddress.city}</p>
-                            <p className="mb-1">Postal Code: {order.shippingAddress.postalCode}</p>
-                            <p className="mb-1">Country: {order.shippingAddress.country}</p>
-                            <p className="mt-3 mb-1">
-                                Status: {order.isDelivered ? (
-                                    <span className="text-success">Delivered on {new Date(order.deliveredAt).toLocaleDateString()}</span>
-                                ) : (
-                                    <span className="text-warning">Not Delivered</span>
-                                )}
-                            </p>
+                    <div className="order-details-section">
+                        <div className="card border-0">
+                            <div className="card-body">
+                                <h5 className="card-title">Shipping Information</h5>
+                                <p className="mb-1">Address: {order.shippingAddress.address}</p>
+                                <p className="mb-1">City: {order.shippingAddress.city}</p>
+                                <p className="mb-1">Postal Code: {order.shippingAddress.postalCode}</p>
+                                <p className="mb-1">Country: {order.shippingAddress.country}</p>
+                                <p className="mt-3 mb-1">
+                                    Status: {order.isDelivered ? (
+                                        <span className="text-success">Delivered on {new Date(order.deliveredAt).toLocaleDateString()}</span>
+                                    ) : (
+                                        <span className="text-warning">Not Delivered</span>
+                                    )}
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="payment-section" className="card mb-4">
-                        <div className="card-body">
-                            <h5 className="card-title">Payment Method</h5>
-                            <p>{order.paymentMethod}</p>
-                            <p>
-                                Status: {order.isPaid ? (
-                                    <span className="text-success">Paid on {new Date(order.paidAt).toLocaleDateString()}</span>
-                                ) : (
-                                    <span className="text-danger">Not Paid</span>
-                                )}
-                            </p>
+                        <div id="payment-section" className="card border-0">
+                            <div className="card-body">
+                                <h5 className="card-title">Payment Method</h5>
+                                <p className="mb-1">{order.paymentMethod}</p>
+                                <p className="mb-0">
+                                    Status: {order.isPaid ? (
+                                        <span className="text-success">Paid on {new Date(order.paidAt).toLocaleDateString()}</span>
+                                    ) : (
+                                        <span className="text-danger">Not Paid</span>
+                                    )}
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="card">
-                        <div className="card-body">
-                            <h5 className="card-title">Order Items</h5>
-                            {order.orderItems.map((item) => (
-                                <div key={item._id} className="d-flex align-items-center mb-3">
-                                    <img
-                                        src={item.imageUrl}
-                                        alt={item.title}
-                                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                                        className="me-3"
-                                    />
-                                    <div className="flex-grow-1">
-                                        <Link to={`/product/${item.product}`}>{item.title}</Link>
-                                        <p className="mb-0">
-                                            {item.quantity} x ${item.price} = ${(item.quantity * item.price).toFixed(2)}
-                                        </p>
+                        <div className="card border-0">
+                            <div className="card-body">
+                                <h5 className="card-title">Order Items</h5>
+                                {order.orderItems.map((item) => (
+                                    <div key={item._id} className="d-flex align-items-center mb-3">
+                                        <img
+                                            src={item.imageUrl}
+                                            alt={item.title}
+                                            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                            className="me-3"
+                                        />
+                                        <div className="flex-grow-1">
+                                            <Link to={`/product/${item.product}`}>{item.title}</Link>
+                                            <p className="mb-0">
+                                                {item.quantity} x ${item.price} = ${(item.quantity * item.price).toFixed(2)}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
