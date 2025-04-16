@@ -14,8 +14,17 @@ const Checkout = () => {
         country: '',
         paymentMethod: 'Credit Card'
     });
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+
+    // List of countries for the dropdown
+    const countries = [
+        'United States', 'Canada', 'United Kingdom', 'Australia', 
+        'Germany', 'France', 'Japan', 'South Korea', 'China', 
+        'Brazil', 'Mexico', 'Spain', 'Italy', 'Pakistan', 
+        'Sweden', 'Norway', 'Denmark', 'Finland', 'Singapore'
+    ].sort();
 
     useEffect(() => {
         if (!loading && !user) {
@@ -29,19 +38,61 @@ const Checkout = () => {
         }
     }, [user, loading, cartItems, navigate]);
 
+    const validateField = (name, value) => {
+        switch (name) {
+            case 'address':
+                return value.trim().length < 5 ? 'Address must be at least 5 characters long' : '';
+            case 'city':
+                return value.trim().length < 2 ? 'Please enter a valid city name' : '';
+            case 'postalCode':
+                return !/^[A-Z0-9]{4,10}$/i.test(value.trim()) 
+                    ? 'Please enter a valid postal code (4-10 characters)' : '';
+            case 'country':
+                return !value ? 'Please select a country' : '';
+            default:
+                return '';
+        }
+    };
+
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
+        }
+        if (submitError) setSubmitError('');
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        Object.keys(formData).forEach(key => {
+            if (key !== 'paymentMethod') {
+                const error = validateField(key, formData[key]);
+                if (error) newErrors[key] = error;
+            }
         });
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
         
+        if (!validateForm()) {
+            return;
+        }
+
         setIsSubmitting(true);
-        setError('');
+        setSubmitError('');
         
         try {
             // Validate auth first
@@ -95,10 +146,9 @@ const Checkout = () => {
                 throw new Error(data.message || 'Failed to create order');
             }
             
-            // Navigate to order details with a query parameter to show payment screen
             navigate(`/order/${data._id}?showPayment=true`);
         } catch (err) {
-            setError(err.message || 'Error creating order. Please try again.');
+            setSubmitError(err.message || 'Error creating order. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -116,64 +166,89 @@ const Checkout = () => {
         <div className="container mt-4">
             <div className="row">
                 <div className="col-md-8">
-                    <div className="card">
+                    <div className="card shadow auth-form">
                         <div className="card-body">
-                            <h3 className="card-title mb-4">Shipping Information</h3>
-                            {error && <div className="alert alert-danger">{error}</div>}
+                            <h3 className="mb-4">Shipping Information</h3>
+                            {submitError && <div className="alert alert-danger">{submitError}</div>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label className="form-label">Address</label>
+                                    <label className="form-label fw-medium">Street Address</label>
                                     <input
                                         type="text"
                                         name="address"
-                                        className="form-control"
+                                        className={`form-control form-control-lg ${errors.address ? 'is-invalid' : ''}`}
                                         value={formData.address}
                                         onChange={handleChange}
                                         required
+                                        placeholder="Enter your street address"
                                         disabled={isSubmitting}
+                                        autoComplete="street-address"
                                     />
+                                    {errors.address && (
+                                        <div className="invalid-feedback">{errors.address}</div>
+                                    )}
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">City</label>
+                                    <label className="form-label fw-medium">City</label>
                                     <input
                                         type="text"
                                         name="city"
-                                        className="form-control"
+                                        className={`form-control form-control-lg ${errors.city ? 'is-invalid' : ''}`}
                                         value={formData.city}
                                         onChange={handleChange}
                                         required
+                                        placeholder="Enter your city"
                                         disabled={isSubmitting}
+                                        autoComplete="address-level2"
                                     />
+                                    {errors.city && (
+                                        <div className="invalid-feedback">{errors.city}</div>
+                                    )}
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Postal Code</label>
+                                    <label className="form-label fw-medium">Postal Code</label>
                                     <input
                                         type="text"
                                         name="postalCode"
-                                        className="form-control"
+                                        className={`form-control form-control-lg ${errors.postalCode ? 'is-invalid' : ''}`}
                                         value={formData.postalCode}
                                         onChange={handleChange}
                                         required
+                                        placeholder="Enter your postal code"
                                         disabled={isSubmitting}
+                                        autoComplete="postal-code"
                                     />
+                                    {errors.postalCode && (
+                                        <div className="invalid-feedback">{errors.postalCode}</div>
+                                    )}
                                 </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Country</label>
-                                    <input
-                                        type="text"
+                                <div className="mb-4">
+                                    <label className="form-label fw-medium">Country</label>
+                                    <select
                                         name="country"
-                                        className="form-control"
+                                        className={`form-select form-select-lg ${errors.country ? 'is-invalid' : ''}`}
                                         value={formData.country}
                                         onChange={handleChange}
                                         required
                                         disabled={isSubmitting}
-                                    />
+                                        autoComplete="country"
+                                    >
+                                        <option value="">Select a country</option>
+                                        {countries.map(country => (
+                                            <option key={country} value={country}>
+                                                {country}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.country && (
+                                        <div className="invalid-feedback">{errors.country}</div>
+                                    )}
                                 </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Payment Method</label>
+                                <div className="mb-4">
+                                    <label className="form-label fw-medium">Payment Method</label>
                                     <select
                                         name="paymentMethod"
-                                        className="form-control"
+                                        className="form-select form-select-lg"
                                         value={formData.paymentMethod}
                                         onChange={handleChange}
                                         disabled={isSubmitting}
@@ -184,10 +259,15 @@ const Checkout = () => {
                                 </div>
                                 <button 
                                     type="submit" 
-                                    className="btn btn-primary"
+                                    className="btn btn-primary btn-lg w-100"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? 'Creating Order...' : 'Place Order'}
+                                    {isSubmitting ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Creating Order...
+                                        </>
+                                    ) : 'Place Order'}
                                 </button>
                             </form>
                         </div>

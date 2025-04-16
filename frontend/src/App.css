@@ -1,7 +1,6 @@
 .App {
   min-height: 100vh;
   background-color: #f8f9fa;
-  text-align: center;
 }
 
 .App-logo {
@@ -322,6 +321,36 @@
   border-width: 0.15em;
 }
 
+.auth-form .form-select-lg {
+  height: calc(1.5em + 1.5rem + 2px);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-position: right 1rem center;
+}
+
+.auth-form .is-invalid {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 1.5rem);
+  background-position: right calc(0.375em + 0.375rem) center;
+}
+
+.auth-form .invalid-feedback {
+  font-size: 0.875rem;
+  margin-top: 0.375rem;
+  color: #dc3545;
+}
+
+.auth-form .form-select.is-invalid {
+  padding-right: 3rem;
+}
+
+/* Order summary card styles */
+.card.order-summary {
+  position: sticky;
+  top: 1rem;
+}
+
 /* Reset text alignment for specific components */
 .text-center {
   text-align: center !important;
@@ -330,4 +359,34 @@
 .alert {
   border-radius: 8px;
   text-align: left;
+}
+
+/* Order details page specific styles */
+.order-details-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.order-details-section .card {
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+
+.order-details-section .card-body {
+  padding: 1.25rem;
+}
+
+.order-details-section .card-title {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.order-details-section p {
+  margin-bottom: 0.5rem;
+}
+
+.order-details-section .mb-1:last-child {
+  margin-bottom: 0 !important;
 }
